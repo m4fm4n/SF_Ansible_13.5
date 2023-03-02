@@ -1,0 +1,27 @@
+---
+# tasks file for php
+- name: apt update
+  apt:
+    update_cache: yes
+
+- name: Install php-fpm
+  apt:
+    name: php8.1-fpm
+
+- name: Remove /etc/php/8.1/fpm/pool.d/www.conf
+  file:
+    path: /etc/php/8.1/fpm/pool.d/www.conf
+    state: absent
+
+- name: Add new /etc/php/8.1/fpm/pool.d/www.conf
+  copy:
+    src: /etc/ansible/roles/php/files/www.conf
+    dest: /etc/php/8.1/fpm/pool.d/www.conf
+    remote_src: yes
+
+- name: Enable service php8.1-fpm
+  service:
+    name: php8.1-fpm
+    enabled: yes
+    state: started
+  notify: restart_php
